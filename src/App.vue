@@ -1,30 +1,71 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { useMoviesStore } from './stores/MoviesStore'
+import Movie from './components/Movie.vue'
+import Search from './components/Search.vue'
+const moviesStore = useMoviesStore()
+const setTab = (id) => {
+    moviesStore.setActiveTab(id)
+}
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+    <main>
+        <header class="header">
+            <img class="header-logo" src="/img/logo.svg" alt="" />
+            <h1>My Favourite movies</h1>
+        </header>
+        <div class="tabs">
+            <button :class="['btn', { btn_green: moviesStore.activeTab === 1 }]" @click="setTab(1)">
+                Favourite
+            </button>
+            <button :class="['btn', { btn_green: moviesStore.activeTab === 2 }]" @click="setTab(2)">
+                Search
+            </button>
+        </div>
+        <div class="movies" v-if="moviesStore.activeTab == 1">
+            <div v-if="moviesStore.watchedMovies.length > 0">
+                <h2>Watched movies ({{ moviesStore.watchedMovies.length }})</h2>
+                <div>
+                    <Movie
+                        :key="'wathcedMovie' + movie.id"
+                        v-for="movie in moviesStore.watchedMovies"
+                        :movie="movie"
+                    ></Movie>
+                </div>
+            </div>
+            <h2>All movies ({{ moviesStore.moviesLen }})</h2>
+            <div>
+                <Movie
+                    :key="'movie' + movie.id"
+                    v-for="movie in moviesStore.movies"
+                    :movie="movie"
+                ></Movie>
+            </div>
+        </div>
+        <Search v-else></Search>
+    </main>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<style scoped lang="scss">
+main {
+    padding: 0 24px;
+    min-height: 100dvh;
+    background: #f7f7f7;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    &-logo {
+        max-width: 50px;
+        margin-right: 10px;
+    }
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
 }
 </style>
