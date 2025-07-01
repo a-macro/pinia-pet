@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+body {
+    font-family: 'Inter', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    margin: 0;
+}
+* {
+    box-sizing: border-box;
+}
+.btn {
+    border: none;
+    width: 100px;
+    height: 40px;
+    font-size: 14px;
+    margin: 0 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #efefef;
+    &:hover {
+        opacity: 0.7;
+    }
+    &_green {
+        background: #37df5c;
+    }
+}
