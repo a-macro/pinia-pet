@@ -1,6 +1,18 @@
 <script setup>
 import { ref } from 'vue'
+import Loader from './Loader.vue'
+import Movie from './Movie.vue'
+import { useSearchStore } from '../stores/SearchStore'
+const searchStore = useSearchStore()
 const searchMovie = ref('')
+let debounceTimer = null
+
+const debounceSearch = () => {
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => {
+        searchStore.getMovies(searchMovie.value)
+    }, 500)
+}
 </script>
 <template>
     <form @submit.prevent="">
@@ -9,8 +21,18 @@ const searchMovie = ref('')
             class="search-input"
             placeholder="Input movie name"
             v-model="searchMovie"
+            @input="debounceSearch"
         />
     </form>
+    <Loader v-if="searchStore.isLoading" />
+    <div v-else-if="searchStore.movies">
+        <Movie
+            :key="'search' + movie.filmId"
+            v-for="movie in searchStore.movies"
+            :movie="movie"
+            :isSearch="true"
+        />
+    </div>
 </template>
 <style lang="scss" scoped>
 .search-input {

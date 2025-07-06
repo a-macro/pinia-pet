@@ -1,40 +1,75 @@
-<template>
-    <div class="movie">
-        <img
-            class="movie-img"
-            :src="`https://image.tmdb.org/t/p/w300_and_h450_bestv2${movie.poster_path}`"
-            :alt="movie.original_title"
-        />
-        <div>
-            <div class="movie-name">{{ movie.original_title }} ({{ movie.release_date }})</div>
-            <span class="movie-overview">{{ movie.overview }}</span>
-            <div class="movie-buttons">
-                <button
-                    class="btn movie-buttons-watched"
-                    @click="moviesStore.toggleWatch(movie.id)"
-                >
-                    <span v-if="!movie.isWatched">Watched</span>
-                    <span v-else>Unwatched</span>
-                </button>
-                <button class="btn movie-buttons-delete" @click="moviesStore.deleteMovie(movie.id)">
-                    Delete
-                </button>
-            </div>
-        </div>
-    </div>
-</template>
 <script setup>
+import { computed } from 'vue'
 import { useMoviesStore } from '../stores/MoviesStore'
+import { useSearchStore } from '../stores/SearchStore'
 const moviesStore = useMoviesStore()
+const searchStore = useSearchStore()
 const props = defineProps({
     movie: {
         type: Object,
         required: true,
         default: {},
     },
+    isSearch: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
 })
+const inFav = computed(() => {
+    let result = false
+    if (props.isSearch) {
+        let id = props.movie.filmId
+        let index = moviesStore.movies.findIndex((el) => el.filmId == id)
+        if (index != -1) {
+            result = true
+        }
+    }
+    return result
+})
+const toggleFav = (movie) => {
+    if (!inFav.value) {
+        searchStore.addToFav(movie)
+    } else {
+        moviesStore.deleteMovie(movie.filmId)
+    }
+}
 </script>
-<style lang="css" scoped>
+<template>
+    <div class="movie">
+        <img class="movie-img" :src="`${movie.posterUrl}`" :alt="movie.nameRu" />
+        <div>
+            <div class="movie-name">{{ movie.nameRu }} ({{ movie.year }})</div>
+            <span class="movie-overview">{{ movie.description }}</span>
+            <div class="movie-buttons" v-if="!isSearch">
+                <button
+                    class="btn movie-buttons-watched"
+                    @click="moviesStore.toggleWatch(movie.filmId)"
+                >
+                    <span v-if="!movie.isWatched">Watched</span>
+                    <span v-else>Unwatched</span>
+                </button>
+                <button
+                    class="btn movie-buttons-delete"
+                    @click="moviesStore.deleteMovie(movie.filmId)"
+                >
+                    Delete
+                </button>
+            </div>
+            <div class="movie-buttons" v-else>
+                <button
+                    class="btn"
+                    :class="inFav ? 'btn_red' : 'btn_green'"
+                    @click="toggleFav(movie)"
+                >
+                    <span v-if="!inFav">To fav</span>
+                    <span v-else>Delete from fav</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+<style lang="scss" scoped>
 .movie {
     display: grid;
     grid-template-columns: 200px 1fr;
@@ -43,6 +78,12 @@ const props = defineProps({
     border: 2px solid #efefef;
     padding: 10px;
     border-radius: 10px;
+    @media (max-width: 768px) {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+    }
 }
 
 .movie-accept {

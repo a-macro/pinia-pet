@@ -27,7 +27,7 @@ const setTab = (id) => {
                 <h2>Watched movies ({{ moviesStore.watchedMovies.length }})</h2>
                 <div>
                     <Movie
-                        :key="'wathcedMovie' + movie.id"
+                        :key="'wathcedMovie' + movie.filmId"
                         v-for="movie in moviesStore.watchedMovies"
                         :movie="movie"
                     ></Movie>
@@ -36,7 +36,7 @@ const setTab = (id) => {
             <h2>All movies ({{ moviesStore.moviesLen }})</h2>
             <div>
                 <Movie
-                    :key="'movie' + movie.id"
+                    :key="'movie' + movie.filmId"
                     v-for="movie in moviesStore.movies"
                     :movie="movie"
                 ></Movie>
@@ -57,6 +57,12 @@ main {
     justify-content: center;
     align-items: center;
     padding: 20px;
+
+    h1 {
+        @media (max-width: 400px) {
+            font-size: 22px;
+        }
+    }
     &-logo {
         max-width: 50px;
         margin-right: 10px;
