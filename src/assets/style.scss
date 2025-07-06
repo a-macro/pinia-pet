@@ -10,7 +10,7 @@ body {
 }
 .btn {
     border: none;
-    width: 100px;
+    min-width: 100px;
     height: 40px;
     font-size: 14px;
     margin: 0 10px;
@@ -22,5 +22,8 @@ body {
     }
     &_green {
         background: #37df5c;
+    }
+    &_red {
+        background: red;
     }
 }
